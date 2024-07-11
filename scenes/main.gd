@@ -2,6 +2,7 @@ extends Node2D
 
 # Settings
 const snake_length = 3
+const max_score = 100 - 3
 
 # Runtime variables
 var snakePos = []
@@ -53,6 +54,7 @@ func rem_segment(index : int):
 
 func prepare_game():
 	get_tree().paused = false
+	$GameWonMenu.hide()
 	$GameOverMenu.hide()
 	$Background.clear_layer(1)
 	$Background.clear_layer(2)
@@ -66,9 +68,12 @@ func start_game():
 	game_started = true
 	$GameTimer.start()
 
-func end_game():
+func end_game(has_won : bool):
 	$GameTimer.stop()
-	$GameOverMenu.show()
+	if has_won:
+		$GameWonMenu.show()
+	else:
+		$GameOverMenu.show()
 	game_prepared = false
 	game_started = false
 	get_tree().paused = true
@@ -94,6 +99,8 @@ func move_snake():
 	if Input.is_action_just_pressed("move_right") and direction != Vector2i.LEFT:
 		direction = Vector2i.RIGHT
 		update.call()
+	if Input.is_action_just_pressed("just_win"):
+		end_game(true)
 
 func is_out_of_bounds():
 	var temp = $Background.get_cell_alternative_tile(0, snake_data[0])
@@ -105,6 +112,8 @@ func is_eating_itself():
 func set_score(new_score : int):
 	score = new_score
 	$Scoreboard.get_node("Score").text = 'SCORE: ' + str(score)
+	if score >= max_score:
+		end_game(true)
 
 func _on_game_timer_timeout():
 	# moves snake
@@ -127,6 +136,8 @@ func _on_game_timer_timeout():
 			# gotta put the winning condition
 			pass
 		elif obj_id == pear_id:
+			direction = last_cell_pos - snake_data[-1]
+			add_segment(last_cell_pos)
 			set_score(score + 1)
 			var center_offset = len(snake_data) / 2
 			for i in range(center_offset, len(snake_data)):
@@ -135,27 +146,38 @@ func _on_game_timer_timeout():
 				var this_id = $Background.get_cell_alternative_tile(1, snake_data[i])
 				$Background.set_cell(1, other_pos, 0, Vector2i(0, 0), this_id)
 				$Background.set_cell(1, snake_data[i], 0, Vector2i(0, 0), other_id)
-			direction = direction * -1
 			snake_data.reverse()
 		place_object()
 	
 	if is_out_of_bounds() or is_eating_itself():
-		end_game()
+		end_game(false)
 	else:
 		can_move = true
 
 func place_object():
+	const object_weights = {
+		apple_id: 0.8,
+		pear_id: 0.2
+		}
+	var rand_tile_id = -1
+	var rand = rng.randf()
+	var accumulated_weight = 0;
+	for key in object_weights:
+		accumulated_weight += object_weights[key]
+		if rand < accumulated_weight:
+			rand_tile_id = key
+			break
 	var rect = $Background.get_used_rect()
 	while true:
 		var pos = Vector2i(rng.randi_range(0, rect.size.x - 1),
 			rng.randi_range(0, rect.size.y - 1))
 		# avoids used tiles
 		if $Background.get_cell_alternative_tile(1, pos) == -1 and $Background.get_cell_alternative_tile(2, pos) == -1:
-			$Background.set_cell(2, pos, 0, Vector2i(0, 0), apple_id)
+			$Background.set_cell(2, pos, 0, Vector2i(0, 0), rand_tile_id)
 			break
 		
 	
 
 
-func _on_game_over_menu_restart():
+func _on_game_restart():
 	prepare_game()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://idaoaa6bj2il"]
+[gd_scene load_steps=12 format=3 uid="uid://idaoaa6bj2il"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_tc685"]
 [ext_resource type="PackedScene" uid="uid://cjm245dxelqp" path="res://scenes/bg_segment.tscn" id="2_4lsyg"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dkop5oaadfdyw" path="res://scenes/snake_head_segment.tscn" id="4_csfhm"]
 [ext_resource type="PackedScene" uid="uid://bofoxfulw0cgn" path="res://scenes/apple_segment.tscn" id="6_bnbu1"]
 [ext_resource type="PackedScene" uid="uid://txfjk8ux6yaj" path="res://scenes/gameover_menu.tscn" id="6_o5kaq"]
+[ext_resource type="PackedScene" uid="uid://b8ttcgiuwwhrj" path="res://scenes/gamewon_menu.tscn" id="9_0l2r1"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_21g3r"]
 scenes/0/scene = ExtResource("2_4lsyg")
@@ -43,7 +44,9 @@ layer_2/tile_data = PackedInt32Array()
 
 [node name="GameOverMenu" parent="." instance=ExtResource("6_o5kaq")]
 process_mode = 2
-visible = false
+
+[node name="GameWonMenu" parent="." instance=ExtResource("9_0l2r1")]
 
 [connection signal="timeout" from="GameTimer" to="." method="_on_game_timer_timeout"]
-[connection signal="restart" from="GameOverMenu" to="." method="_on_game_over_menu_restart"]
+[connection signal="restart" from="GameOverMenu" to="." method="_on_game_restart"]
+[connection signal="restart" from="GameWonMenu" to="." method="_on_game_restart"]
