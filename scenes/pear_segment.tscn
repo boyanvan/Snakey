@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkwnschp1a63a"]
+
+[ext_resource type="Texture2D" uid="uid://bb3ij1wjn05ir" path="res://assets/pixel_pear_48.png" id="1_p4hib"]
+
+[node name="Sprite2D" type="Sprite2D"]
+texture = ExtResource("1_p4hib")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bofoxfulw0cgn"]
+
+[ext_resource type="Texture2D" uid="uid://cuvquyct2mqmd" path="res://assets/pixel-apple.png" id="1_6ojsm"]
+
+[node name="Sprite2D" type="Sprite2D"]
+texture = ExtResource("1_6ojsm")
